@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+        
+
+        .container select {
+            background-color: #eee;
+            border: none;
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 13px;
+            border-radius: 8px;
+            width: 200px; /* Adjust the width as needed */
+            height: 35px;
+            outline: none;
+        }
+
+        .container select option:first-child {
+            color: gray;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        button.logout {
+            display: block;
+            position: absolute;
+            top: 300px; /* Distance from the top of the viewport */
+            right: 535px; /* Distance from the right of the viewport */
+            background-color: #d63638;
+            color: #fff;
+            padding: 10px 20px; /* Adjust padding as needed */
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s ease;
+            z-index: 9999; /* Ensure the button is on top */
+        }
+
+        button.logout:hover {
+            background-color: #aa2d2f;
+        }
+
+        .reading-section {
+            margin-top: 30px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+
+        .reading-input {
+            margin-bottom: 20px;
+        }
+
+        .reading-input label {
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: block;
+            color: #333;
+        }
+
+        .reading-input input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .submit-reading {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-reading:hover {
+            background-color: #45a049;
+        }
+        .help-button {
+            position: absolute;
+            top: 52px;
+            right: 490px; /* Adjust the right positioning */
+            background-color: #d63638;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Help dialog styles */
+        .help-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000; /* Ensure the dialog appears above other elements */
+        }
+
+        .help-dialog h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .help-dialog p {
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .help-dialog button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .help-dialog button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, <span id="username"></span></h1>
+        <p>Your ID: <span id="userID"></span></p>
+        <label for="readingStatus">Have you taken your blood sugar reading today?</label>
+        <select name="readingStatus" id="readingStatus" onchange="handleReadingStatus()" required>
+            <option value="" disabled selected hidden>Select Status</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+        <div class="reading-section" id="readingSection">
+            <!-- Reading input field will be added here dynamically -->
+        </div>
+    </div>
+    <button class="logout" onclick="logout()" id="logoutButton" >Logout</button>
+    <button class="help-button" onclick="toggleHelp()" title="Need Assistance? Click Here for Help"><i class="fas fa-question-circle"></i></button>
+    <div class="help-dialog" id="helpDialog">
+        <h2>Help Information</h2>
+        <p>Welcome to the Diabetes Monitoring System.</p>
+        <p>Here are some tips to help you navigate the interface:</p>
+        <ul>
+            <li>Once logged in, you can select your current blood sugar reading status from the dropdown menu. Choose "Yes" if you have taken your reading, or "No" if you haven't.</li>
+            <li>If you select "Yes," you'll be prompted to enter your blood sugar reading in the input field provided. Make sure to enter the reading accurately.</li>
+            <li>On the blood glucose monitoring screen, enter your reading and follow the instructions provided.</li>
+            <li>If your blood sugar reading is outside the normal range (above 140 mg/dL or below 80 mg/dL), the system will provide guidance on what actions to take and may prompt you for additional information.</li>
+            <li>After entering your reading and any necessary information, click the "Submit" button to record your reading and any associated details.</li>
+            <li>You can also click the "Logout" button at any time to log out of the system.</li>
+    
+        </ul>
+        <button onclick="toggleHelp()">Close</button>
+    </div>
+
+    
+    <script>
+        // Assume the user's name and ID are retrieved from somewhere
+        const username = "Sara Norman";
+        const userID = "5344-9709";
+        let bloodSugarReading = null;
+
+        // Function to set the username and userID in the HTML
+        function setUserInfo() {
+            document.getElementById("username").textContent = username;
+            document.getElementById("userID").textContent = userID;
+        }
+
+        // Function to handle the user's selection in the select menu
+        function handleReadingStatus() {
+            const readingStatus = document.getElementById("readingStatus").value;
+            if (readingStatus === "yes") {
+                showReadingInput();
+            } else if (readingStatus === "no") {
+                promptReading();
+            }
+        }
+
+        // Function to display the blood sugar reading input field
+        function showReadingInput() {
+            document.getElementById("readingSection").innerHTML = `
+                <h2>Blood Sugar Reading</h2>
+                <label for="bloodSugar">Enter your blood sugar reading (mg/dL):</label>
+                <input type="number" id="bloodSugar" placeholder="Enter reading" style="background-color: #eee; border: none; margin: 8px 0; padding: 10px 15px; font-size: 13px; border-radius: 8px; width: 200px; outline: none;">
+                <button id="submitReading" type="submit" style="background-color: #d63638; color: #fff; font-size: 12px; padding: 10px 45px; border: 1px solid transparent; border-radius: 8px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 10px; cursor: pointer;">Submit</button>
+            `;
+    
+            // Add event listener to the submit button
+            document.getElementById("submitReading").addEventListener("click", submitReading);
+            adjustButtonPosition();
+        }
+
+        // Function to prompt the user to take the blood sugar reading immediately
+        function promptReading() {
+            alert("Please take your blood sugar reading immediately and record the results.");
+        }
+
+        // Function to submit blood sugar reading
+        function submitReading() {
+            var readingInput = document.getElementById("bloodSugar");
+            var readingValue = parseInt(readingInput.value);
+
+            if (isNaN(readingValue) || readingValue < 0 || readingValue > 999) {
+                alert("Please enter a valid reading between 0 and 999.");
+                readingInput.focus(); // Focus on the input field
+                return false; // Prevent form submission
+            }
+
+            if (readingValue !== "") {
+                bloodSugarReading = parseInt(readingInput.value);
+                if (bloodSugarReading > 140) {
+                    alert(`Your blood sugar reading is high. Please call your doctor immediately. 
+                            Doctor Detail's
+                    Doctor's Name: Dr. Jason Rosenberg
+                    Doctor's Phone: 579-0432`);
+
+                    var ketones = prompt("Is there a presence of ketones in your urine? (YES/NO)");
+                    if (ketones !== null && ketones !== "") {
+                        // Handle ketones presence
+                    } else {
+                        alert("Please enter if there is a presence of ketones in your urine.");
+                        var ketones = prompt("Is there a presence of ketones in your urine? (YES/NO)");
+                    }
+
+                    var reason = prompt("Explain why you feel your reading isn't normal (e.g., Drank soda, Has the flu, Ate a big lunch, etc.):");
+                    if (reason !== null && reason !== "") {
+                        alert(`Presence of Ketones: ${ketones} \nReason for abnormal reading: ${reason}`);
+                        
+                    } else {
+                        alert("Please provide a reason for the abnormal reading.");
+                    }
+                } else if (bloodSugarReading < 80) {
+                    alert(`Your blood sugar reading is low. Please eat a sugar source, take your medicine, and eat meals and snacks as described by your doctor.`);
+
+                    var reason = prompt("Explain why you feel your reading isn't normal (e.g., Drank soda, Has the flu, Ate a big lunch, etc.):");
+                    if (reason !== null && reason !== "") {
+                        alert(`Reason for abnormal reading: ${reason}`);
+                    } else {
+                        alert("Please provide a reason for the abnormal reading.");
+                    }
+                } else {
+                        alert(`Your blood sugar reading is within a normal range.`);
+                    }
+            } else {
+                        alert("Please enter your blood sugar reading.");
+            }  
+        }
+        function toggleHelp() {
+            const helpDialog = document.getElementById("helpDialog");
+            if (helpDialog.style.display === "block") {
+                helpDialog.style.display = "none";
+                logoutButton.style.visibility = "visible";
+            } else {
+                helpDialog.style.display = "block";   
+                logoutButton.style.visibility = "hidden";
+
+            }
+        }
+  
+        // Function to logout (for demonstration purposes)
+        function logout() {
+            window.location.href = "login.html";
+        }
+        function adjustButtonPosition() {
+            const button = document.querySelector("button.logout ");
+            const expandedSectionHeight = document.querySelector(".reading-section").offsetHeight;
+            button.style.top = expandedSectionHeight + 315 + "px";
+        }
+
+
+        // Call the setUserInfo function when the page loads
+        window.onload = function() {
+            setUserInfo();
+        };
+    </script>
+</body>
+</html>
+
